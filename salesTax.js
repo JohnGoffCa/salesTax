@@ -23,10 +23,30 @@ var companySalesData = [
 ];
 
 function calculateSalesTax(salesData, taxRates) {
-  salesData.forEach(function (company) {
-    console.log(JSON.stringify(company, undefined, 2));
-  });
+  companiesWithTax = [];
+  for (var i = 0; i < salesData.length; i++) {
+    var result = {}
+    result.name = salesData[i].name;
+    result.totalSales = salesData[i].sales.reduce((a, b) => a + b);
+    result.totalTaxes = result.totalSales * salesTaxRates[salesData[i]["province"]];
+    companiesWithTax.push(result);
+  }
+  var companiesCombined = combineObjects(companiesWithTax);
+  console.log(JSON.stringify(companiesWithTax, undefined, 2));
 }
+
+function combineObjects(array) {
+  for (var i = array.length - 1; i >= 0; i--) {
+    for (var j = i - 1; j >= 0; j--) {
+      if (array[i].name == array[j].name) {
+        array[i].totalSales += array[j].totalSales
+        array[i].totalTaxes += array[j].totalTaxes
+        array.splice(j, 1);
+      } 
+    }
+  }
+}
+
 
 var results = calculateSalesTax(companySalesData, salesTaxRates);
 
